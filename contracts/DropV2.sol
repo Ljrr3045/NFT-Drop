@@ -14,7 +14,7 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
     State state;
 
     uint private timeWhiteListMint;
-    bool private _init;
+    uint private _init;
     address internal _Owner;
     IMyErc721 _Erc721;
     IMyErc1155 _Erc1155;
@@ -25,7 +25,8 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
     }
 
     function const(address _adreErc721, address _adreErc1155) initializer() public {
-        require (_init == false);
+
+        if(_init == 0){
         _Owner = msg.sender;
 
         _setupRole("Admin", msg.sender);
@@ -38,11 +39,16 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
         _Erc721 = IMyErc721(_adreErc721);
         _Erc1155 = IMyErc1155(_adreErc1155);
 
+        state = State.nobody;
+
+        _init++;
+        }
+
+        if(_init == 1){
         __ERC20_init("KimetzuERC20", "KMZ20");
         _mint(_Owner, 50);
-
-        state = State.nobody;
-        _init = true;
+        _init++;
+        } 
     }
 
     function initMint(State _state) external onlyRole("Admin"){
@@ -60,13 +66,13 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
         }
     }
 
-    function burn(uint256 _id, uint256 _amount, Stand _stand) public onlyRole("Minter") {
+    function burn(uint256 _id, uint256 _amount, Stand _stand) public {
         if(_stand == Stand.erc721){
+            require(_Erc721.ownerOf(_id) == msg.sender, "You not is owner");
             _Erc721.burn(_id);
-        } else if(_stand == Stand.erc1155){
+        } else{
+            require(_Erc1155.balanceOf(msg.sender,_id) > 0,"You not is owner");
             _Erc1155.burn(msg.sender,_id, _amount);
-        }else{
-            revert("Standar not exist");
         }
     }
 
@@ -93,41 +99,32 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
         _grantRole("Minter", msg.sender);
     }
 
-    function buyToken20() public payable returns(bool){
+    function buyToken20() public payable{
         require(msg.value >= 0.0001 ether, "Not enaug mony for buy tokens");
-        uint tokenConvertion = msg.value / 0.00001 ether;
+        uint tokenConvertion = msg.value / 0.001 ether;
         _mint(msg.sender, tokenConvertion);
-        return true;
     }
 
     function returnAdrresContract(Stand _stand) public view returns(address){
         if(_stand == Stand.erc721){
             return address(_Erc721);
-        } else if (_stand == Stand.erc1155) {
-            return address(_Erc1155);
         } else{
-            revert("Standar not exist");
+            return address(_Erc1155);
         }
     }
 
     function _mintDrop(uint256 _id, uint256 _amount,Stand _stand) internal{
-        uint _balanceOwnerLast = balanceOf(_Owner);
         uint totalPay;
 
         if(_stand == Stand.erc721){
             totalPay = 60;
             _transfer(msg.sender, _Owner, totalPay);
-            require((_balanceOwnerLast + totalPay) == balanceOf(_Owner), "Pay is not Enaugh");
             _Erc721.mint(msg.sender,_id);
 
-        } else if(_stand == Stand.erc1155){
+        } else{
             totalPay = 60 * _amount;
             _transfer(msg.sender, _Owner, totalPay);
-            require((_balanceOwnerLast + totalPay) == balanceOf(_Owner), "Pay is not Enaugh");
-            _Erc1155.mint(msg.sender,_id, _amount);
-            
-        }else{
-            revert("Standar not exist");
+            _Erc1155.mint(msg.sender,_id, _amount); 
         }
     }
 }

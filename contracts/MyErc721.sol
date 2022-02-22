@@ -31,7 +31,7 @@ contract MyErc721 is ERC721Pausable, Ownable{
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory){
-      require(_exists(tokenId),"Nonexistent token");
+      require(_exists(tokenId),"No existent token");
     
       if(revealed == false) {
       return notRevealedUri;

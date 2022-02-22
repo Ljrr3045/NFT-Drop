@@ -21,16 +21,6 @@ contract MyErc1155 is ERC1155Pausable, Ownable{
         notRevealedUri = _notRevealedUri;
     }
 
-   function uri(uint256 tokenId) public view virtual override returns (string memory){
-    require( _exists(tokenId),"Nonexistent token");
-    
-    if(revealed == false) {
-        return notRevealedUri;
-    }
-
-    return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString() , baseExtension)) : "";
-    }
-
    function mint(address _to, uint256 _id, uint256 _amount) public onlyOwner {
         require(_id > 0 && _id <=10, "Not exist more token");
         _mint( _to, _id, _amount,""); 
@@ -42,8 +32,18 @@ contract MyErc1155 is ERC1155Pausable, Ownable{
         _burn(account, id, value);
     }
 
+    function uri(uint256 tokenId) public view virtual override returns (string memory){
+        require(_exists(tokenId),"No existent token");
+    
+        if(revealed == false) {
+        return notRevealedUri;
+        }
+
+        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString() , baseExtension)) : "";
+    }
+
    function reveal() public onlyOwner {
-      revealed = true;
+        revealed = true;
     }
 
     function pause() public onlyOwner{
@@ -55,6 +55,6 @@ contract MyErc1155 is ERC1155Pausable, Ownable{
     }  
 
     function _exists(uint256 _id) internal view returns(bool){
-      return exist[_id]; 
+        return exist[_id]; 
     }
 }

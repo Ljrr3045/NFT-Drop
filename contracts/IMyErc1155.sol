@@ -7,6 +7,7 @@ import "./MyErc1155.sol";
 interface IMyErc1155 {
     function mint(address _to, uint256 _id, uint256 _amount) external;
     function burn(address account, uint256 id, uint256 value) external;
+    function balanceOf(address account, uint256 id) external view returns (uint256);
     function reveal() external;
     function pause() external;
     function unpause() external;
