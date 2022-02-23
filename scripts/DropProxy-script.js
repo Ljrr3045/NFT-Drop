@@ -2,6 +2,8 @@ const { ethers, upgrades } = require("hardhat");
 
 async function main() {
 
+ let [owner, per1, per2] = await ethers.getSigners();
+
  let Drop = await ethers.getContractFactory("Drop");
 
  let MyErc721 = await ethers.getContractFactory("MyErc721");
@@ -16,6 +18,15 @@ async function main() {
 
  await myErc721.transferOwnership(drop.address);
  await myErc1155.transferOwnership(drop.address);
+
+ await drop.connect(owner).initMint(2);
+ await drop.connect(per1).getRole();
+ await drop.connect(per2).getRole();
+ await drop.connect(per1).mint(1, 1, 0, {value: ethers.utils.parseEther("0.01")});
+ await drop.connect(per2).mint(4, 1, 0, {value: ethers.utils.parseEther("0.01")});
+ await drop.connect(per1).mint(3, 2, 1, {value: ethers.utils.parseEther("0.02")});
+ await drop.connect(per2).mint(2, 3, 1, {value: ethers.utils.parseEther("0.03")});
+ await drop.connect(owner).reveal();
 
  console.log("Address of Proxy Contract: ", drop.address);
  console.log("Address of ERC721 Contract: ", myErc721.address);

@@ -7,7 +7,7 @@ pragma solidity >=0.7.0 <0.9.0;
   *@notice This contract is responsible for managing all the sale and burning of the ERC721 and ERC1155 tokens. 
   For a person to be able to participate, only the Mint role must be assigned, also if a person wants to participate 
   in the purchase of some NFT before time, then only the admin must assign him the "Whitelist" role so that he can 
-  participate in this previous sale.
+  participate in this previous sale with the "grantRole" function.
   *@dev ***Read the Notes***
   
   Note 1: I am very aware that a better way to design this contract was to deploy the contracts "MyERC721" and "MyERC1155" 

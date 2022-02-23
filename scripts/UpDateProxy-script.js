@@ -1,9 +1,9 @@
 const { ethers, upgrades } = require("hardhat");
 
 async function main() {
-    let proxyAddress; //insert address
-    let erc721Adrdress; //insert address
-    let erc1155Adrdress; //insert address
+    let proxyAddress = "0xC3800f8b8043AD4C72629b1462FFeD920c8cA97a";
+    let erc721Adrdress = "0x447aFf79eC207D4c0aCFF03d598e711FA18e0c0D";
+    let erc1155Adrdress = "0x9F18cD6a4F503a9E7Fe4df92aC9A98113413ebe0";
 
     const DropV2 = await ethers.getContractFactory("DropV2");
 
