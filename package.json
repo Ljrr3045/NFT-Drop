@@ -7,6 +7,7 @@
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-etherscan": "^3.0.1",
     "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@openzeppelin/hardhat-upgrades": "^1.14.0",
     "chai": "^4.2.0",
@@ -14,7 +15,7 @@
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.5.4"
   },
-  "scripts":{
+  "scripts": {
     "compile": "yarn hardhat compile",
     "test": " yarn hardhat test",
     "scriptDeploy": "yarn hardhat run --network localhost scripts/DropProxy-script.js",

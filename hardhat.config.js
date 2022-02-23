@@ -1,7 +1,12 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-ethers");
 require('@openzeppelin/hardhat-upgrades');
 require("@nomiclabs/hardhat-web3");
 require("dotenv").config();
+require("@nomiclabs/hardhat-etherscan");
+
+console.log(process.env.ETHERSCAN_API_KEY)
+
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -28,5 +33,10 @@ module.exports = {
         mnemonic: process.env.MNEMONIC
       },
     },
+  },
+  etherscan: {
+    apiKey: {
+      rinkeby: process.env.ETHERSCAN_API_KEY
+    }
   }
 };
