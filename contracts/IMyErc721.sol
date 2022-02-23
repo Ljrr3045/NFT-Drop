@@ -2,6 +2,12 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
+/**@title Interface for the ERC721 token
+  *@author ljrr3045
+  *@notice This interface contains the necessary functionalities to interact with 
+   the "MyErc721" contract from the "Drop" contract.
+*/
+
 import "./MyErc721.sol";
 
 interface IMyErc721 {

@@ -2,6 +2,12 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
+/**@title Interface for the ERC1155 token
+  *@author ljrr3045
+  *@notice This interface contains the necessary functionalities to interact with 
+   the "MyErc1155" contract from the "Drop" contract.
+*/
+
 import "./MyErc1155.sol";
 
 interface IMyErc1155 {

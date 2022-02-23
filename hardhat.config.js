@@ -20,4 +20,10 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 module.exports = {
   solidity: "0.8.8",
+  // networks: {
+  //   rinkeby: {
+  //     url: process.env.RINKEBY_URL,
+  //     accounts: process.env.MNEMONIC,
+  //   },
+  // }
 };

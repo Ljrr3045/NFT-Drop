@@ -2,6 +2,12 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
+/**@title This contract is version 2 of the Drop contract
+  *@author ljrr3045
+  *@notice This contract is different from its version 1, which allows users to buy an ERC20 token 
+  in order to buy their NFTs. These ERC20 tokens can be exchanged freely.
+  */
+
 import "./IMyErc721.sol";
 import "./IMyErc1155.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
@@ -11,9 +17,8 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
 
     enum Stand {erc721, erc1155}
     enum State {nobody, whiteList, allMinter}
-    State state;
+    State public state;
 
-    uint private timeWhiteListMint;
     uint private _init;
     address internal _Owner;
     IMyErc721 _Erc721;
@@ -24,7 +29,11 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
         _;
     }
 
+    /**@dev The constructor function is modified a bit so that when it is called a second time 
+       (that is, when it is updated) it takes care of initializing only the ERC20 token. 
+    */
     function const(address _adreErc721, address _adreErc1155) initializer() public {
+        require (_init == 0 || _init == 1,"Contract be init");
 
         if(_init == 0){
         _Owner = msg.sender;
@@ -76,11 +85,6 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
         }
     }
 
-    function reveal() public onlyRole("Admin"){
-        _Erc721.reveal();
-        _Erc1155.reveal();
-    }
-
     function pause() public onlyRole("Admin"){
         _Erc721.pause();
         _Erc1155.pause();
@@ -91,18 +95,13 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
         _Erc1155.unpause();
     }
 
-    function withdraw() public onlyRole("Owner"){
-        payable(_Owner).transfer(address(this).balance);
+    function reveal() public onlyRole("Admin"){
+        _Erc721.reveal();
+        _Erc1155.reveal();
     }
 
     function getRole() public {
         _grantRole("Minter", msg.sender);
-    }
-
-    function buyToken20() public payable{
-        require(msg.value >= 0.0001 ether, "Not enaug mony for buy tokens");
-        uint tokenConvertion = msg.value / 0.001 ether;
-        _mint(msg.sender, tokenConvertion);
     }
 
     function returnAdrresContract(Stand _stand) public view returns(address){
@@ -113,6 +112,24 @@ contract DropV2 is AccessControlUpgradeable, ERC20Upgradeable {
         }
     }
 
+    function withdraw() public onlyRole("Owner"){
+        payable(_Owner).transfer(address(this).balance);
+    }
+
+    //***New functions***
+
+    /**@notice Function that allows any user to buy the ERC20 token, as long as the minimum payment amount 
+       is 0.001 ether (price of each token).
+    */
+    function buyToken20() public payable{
+        require(msg.value >= 0.001 ether, "Not enaug mony for buy tokens");
+        uint tokenConvertion = msg.value / 0.001 ether;
+        _mint(msg.sender, tokenConvertion);
+    }
+
+    /**@notice Function in charge of the mint of the NFT, the amount of ERC20 tokens to cancel will be automatically 
+       deducted from the user's account, in case of not having enough token balance the operation will fail.
+    */
     function _mintDrop(uint256 _id, uint256 _amount,Stand _stand) internal{
         uint totalPay;
 
